@@ -1,0 +1,16 @@
+version: '3.0'
+
+services:
+  validate_password_service:
+    container_name: 'validate_password_service'
+    build: "./validate_password_api"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=test"
+    ports:
+      - "8081:8081"
+    networks:
+      - "validate_password_service_network"
+
+networks:
+  validate_password_service_network:
+    driver: 'bridge'
