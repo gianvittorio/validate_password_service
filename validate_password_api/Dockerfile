@@ -1,6 +1,7 @@
 FROM openjdk:11
 
 EXPOSE 8081/tcp
+EXPOSE 443/tcp
 
 WORKDIR /opt/validate_password
 
