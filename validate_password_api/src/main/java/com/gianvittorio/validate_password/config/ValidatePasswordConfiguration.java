@@ -1,6 +1,6 @@
 package com.gianvittorio.validate_password.config;
 
-import com.gianvittorio.validate_password.lib.*;
+import com.gianvittorio.validate_password.lib.password_validator.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

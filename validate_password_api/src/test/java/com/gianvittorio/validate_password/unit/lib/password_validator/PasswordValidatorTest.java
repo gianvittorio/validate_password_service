@@ -1,7 +1,7 @@
-package com.gianvittorio.validate_password.unit.lib;
+package com.gianvittorio.validate_password.unit.lib.password_validator;
 
 import com.gianvittorio.validate_password.config.ValidatePasswordConfiguration;
-import com.gianvittorio.validate_password.unit.lib.util.BasePasswordValidatorTest;
+import com.gianvittorio.validate_password.unit.lib.password_validator.util.BasePasswordValidatorTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

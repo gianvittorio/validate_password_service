@@ -1,4 +1,4 @@
-package com.gianvittorio.validate_password.lib;
+package com.gianvittorio.validate_password.lib.password_validator;
 
 public class LowerCaseValidator extends SingleCharacterMatchingValidator {
 

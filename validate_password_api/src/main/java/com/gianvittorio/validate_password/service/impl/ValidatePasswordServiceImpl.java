@@ -1,6 +1,6 @@
 package com.gianvittorio.validate_password.service.impl;
 
-import com.gianvittorio.validate_password.lib.PasswordValidator;
+import com.gianvittorio.validate_password.lib.password_validator.PasswordValidator;
 import com.gianvittorio.validate_password.service.ValidatePasswordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

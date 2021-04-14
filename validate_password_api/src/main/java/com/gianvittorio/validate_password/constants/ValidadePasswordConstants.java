@@ -10,4 +10,10 @@ public class ValidadePasswordConstants {
     public static final String DEFAULT_ERROR_MESSAGE = AUTHORIZATION_HEADER + " header is either absent or malformed.";
 
     public static final long MINIMUM_PASSWORD_LENGTH = 9;
+
+    public static final String DEFAULT_USER = "spring";
+
+    public static final String INVALID_DEFAULT_PASSWORD = "webflux";
+
+    public static final String VALID_DEFAULT_PASSWORD = "AbTp9!fok";
 }

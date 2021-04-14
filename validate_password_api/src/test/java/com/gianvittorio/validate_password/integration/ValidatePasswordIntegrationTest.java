@@ -1,8 +1,8 @@
 package com.gianvittorio.validate_password.integration;
 
 import com.gianvittorio.validate_password.constants.ValidadePasswordConstants;
+import com.gianvittorio.validate_password.lib.codec.Base64Codec;
 import com.gianvittorio.validate_password.service.ValidatePasswordService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +30,8 @@ public class ValidatePasswordIntegrationTest {
     @Autowired
     private ValidatePasswordService validatePasswordService;
 
+    private Base64Codec base64Codec = new Base64Codec();
+
     @LocalServerPort
     private int port;
 
@@ -43,11 +45,29 @@ public class ValidatePasswordIntegrationTest {
     }
 
     @Test
-    @DisplayName("Must validate password, once it is available as a header")
-    public void validatePasswordTest() {
+    @DisplayName("Must return true whenever provided password is valid")
+    public void validPasswordTest() {
+        String encodedCredentials = base64Codec.encode(DEFAULT_USER.concat(":").concat(VALID_DEFAULT_PASSWORD));
+
         webTestClient.get()
                 .uri(uri.concat("/validate"))
-                .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX.concat("blah blah"))
+                .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX.concat(encodedCredentials))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Boolean.class)
+                .consumeWith(consumer -> {
+                    assertThat(consumer.getResponseBody()).isTrue();
+                });
+    }
+
+    @Test
+    @DisplayName("Must return false whenever provided password is valid")
+    public void invalidPasswordTest() {
+        String encodedCredentials = base64Codec.encode(DEFAULT_USER.concat(":").concat(INVALID_DEFAULT_PASSWORD));
+
+        webTestClient.get()
+                .uri(uri.concat("/validate"))
+                .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX.concat(encodedCredentials))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Boolean.class)
@@ -70,9 +90,11 @@ public class ValidatePasswordIntegrationTest {
     @Test
     @DisplayName("Must return 400 whenever Authorization header is malformed")
     public void mustThrowIfAuthorizationIsMalformedTest() {
+        String encodedCredentials = base64Codec.encode(DEFAULT_USER.concat(":").concat(INVALID_DEFAULT_PASSWORD));
+
         webTestClient.get()
                 .uri(uri.concat("/validate"))
-                .header(AUTHORIZATION_HEADER, "blah blah")
+                .header(AUTHORIZATION_HEADER, encodedCredentials)
                 .exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(String.class)
