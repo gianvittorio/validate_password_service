@@ -1,13 +1,10 @@
 package com.gianvittorio.validate_password.unit.controller;
 
-import com.gianvittorio.validate_password.constants.ValidadePasswordConstants;
-import com.gianvittorio.validate_password.service.ValidatePasswordService;
 import com.gianvittorio.validate_password.controller.ValidatePasswordController;
+import com.gianvittorio.validate_password.service.ValidatePasswordService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,7 +16,7 @@ import reactor.core.publisher.Mono;
 import static com.gianvittorio.validate_password.constants.ValidadePasswordConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
