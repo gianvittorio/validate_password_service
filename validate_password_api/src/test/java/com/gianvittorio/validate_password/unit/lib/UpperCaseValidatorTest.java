@@ -20,13 +20,19 @@ class UpperCaseValidatorTest extends BasePasswordValidatorTest {
     public void atLeastOneUpperCaseCharacterTest() {
         final String password = "A";
 
-        assertThat(passwordValidator.isValidImpl(password.toCharArray())).isTrue();
+        assertThat(passwordValidator.isValid(password.toCharArray())).isTrue();
     }
 
     @Test
     @DisplayName("Must return false whenever no uppercase character is present")
     public void upperCaseCharacterIsAbsentTest() {
-        assertThat(passwordValidator.isValidImpl("".toCharArray())).isFalse();
+        assertThat(passwordValidator.isValid("".toCharArray())).isFalse();
+    }
+
+    @Test
+    @DisplayName("Must return false whenever password is null")
+    public void nullPasswordTest() {
+        assertThat(passwordValidator.isValid(null)).isFalse();
     }
 }
 

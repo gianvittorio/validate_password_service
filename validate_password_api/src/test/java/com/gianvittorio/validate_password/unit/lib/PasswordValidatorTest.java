@@ -19,6 +19,12 @@ public class PasswordValidatorTest extends BasePasswordValidatorTest {
     }
 
     @Test
+    @DisplayName("Must return false whenever password is null")
+    public void nullPasswordTest() {
+        assertThat(passwordValidator.isValid(null)).isFalse();
+    }
+
+    @Test
     @DisplayName("Run miscellaneous parameterized tests")
     public void miscellaneousTest() {
         Map<String, Boolean> parameters = Map.of(
@@ -36,7 +42,7 @@ public class PasswordValidatorTest extends BasePasswordValidatorTest {
                 .forEach(password -> {
                     boolean expectation = parameters.get(password);
 
-                    assertThat(passwordValidator.isValidImpl(password.toCharArray())).isEqualTo(expectation);
+                    assertThat(passwordValidator.isValid(password.toCharArray())).isEqualTo(expectation);
                 });
     }
 }

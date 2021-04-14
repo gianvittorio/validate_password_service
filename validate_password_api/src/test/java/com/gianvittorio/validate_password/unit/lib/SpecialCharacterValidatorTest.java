@@ -20,7 +20,7 @@ class SpecialCharacterValidatorTest extends BasePasswordValidatorTest {
     public void atLeastOneSpecialCharacterTest() {
         final String password = "ab+";
 
-        assertThat(passwordValidator.isValidImpl(password.toCharArray())).isTrue();
+        assertThat(passwordValidator.isValid(password.toCharArray())).isTrue();
     }
 
     @Test
@@ -28,6 +28,12 @@ class SpecialCharacterValidatorTest extends BasePasswordValidatorTest {
     public void specialCharacterIsAbsentTest() {
         final String password = "ab";
 
-        assertThat(passwordValidator.isValidImpl(password.toCharArray())).isFalse();
+        assertThat(passwordValidator.isValid(password.toCharArray())).isFalse();
+    }
+
+    @Test
+    @DisplayName("Must return false whenever password is null")
+    public void nullPasswordTest() {
+        assertThat(passwordValidator.isValid(null)).isFalse();
     }
 }

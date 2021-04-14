@@ -21,7 +21,7 @@ class SizeValidatorTest extends BasePasswordValidatorTest {
     public void minimumLengthTest() {
         final String password = "012345678";
 
-        assertThat(passwordValidator.isValidImpl(password.toCharArray())).isTrue();
+        assertThat(passwordValidator.isValid(password.toCharArray())).isTrue();
     }
 
     @Test
@@ -29,12 +29,18 @@ class SizeValidatorTest extends BasePasswordValidatorTest {
     public void aboveMinimumLengthTest() {
         final String password = "0123456789";
 
-        assertThat(passwordValidator.isValidImpl(password.toCharArray())).isTrue();
+        assertThat(passwordValidator.isValid(password.toCharArray())).isTrue();
     }
 
     @Test
     @DisplayName("Must return false whenever password length is below minimum")
     public void belowMinimumLengthTest() {
-        assertThat(passwordValidator.isValidImpl("".toCharArray())).isFalse();
+        assertThat(passwordValidator.isValid("".toCharArray())).isFalse();
+    }
+
+    @Test
+    @DisplayName("Must return false whenever password is null")
+    public void nullPasswordTest() {
+        assertThat(passwordValidator.isValid(null)).isFalse();
     }
 }
