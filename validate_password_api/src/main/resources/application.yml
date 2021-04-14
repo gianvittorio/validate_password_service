@@ -2,4 +2,11 @@ spring:
   profiles:
     active: docker
 
+logging:
+  file:
+    name: "/tmp/validate_password/logs/application.log"
+    level:
+      org.springframework: error
+      com.gianvittorio.validate_password.controller: info
+
 security_scheme: "Basic Authentication"

@@ -11,6 +11,11 @@ services:
       - "8080:80"
     networks:
       - "validate_password_service_network"
+    volumes:
+      - "validate_password_service_volume:/tmp/validate_password/logs"
+
+volumes:
+  validate_password_service_volume:
 
 networks:
   validate_password_service_network:

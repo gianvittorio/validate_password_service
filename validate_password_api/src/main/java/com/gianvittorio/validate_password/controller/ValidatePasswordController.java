@@ -4,6 +4,9 @@ import com.gianvittorio.validate_password.constants.ValidadePasswordConstants;
 import com.gianvittorio.validate_password.lib.codec.Base64Codec;
 import com.gianvittorio.validate_password.service.ValidatePasswordService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +35,8 @@ public class ValidatePasswordController {
     @Operation(summary = "Password validation")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Password is valid"),
-            @ApiResponse(responseCode = "400", description = "Password was not found amongst headers or it was malformed")
+            @ApiResponse(responseCode = "400", description = "Password is either absent or malformed",
+                    content = @Content(schema = @Schema(implementation = String.class), examples = {@ExampleObject(value = DEFAULT_ERROR_MESSAGE)}))
     })
     public Mono<Boolean> isValid(@RequestHeader Map<String, String> headers) {
         String base64credentials = headers.get(AUTHORIZATION_HEADER);

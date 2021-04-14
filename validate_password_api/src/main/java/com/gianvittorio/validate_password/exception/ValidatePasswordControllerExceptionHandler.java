@@ -13,7 +13,7 @@ public class ValidatePasswordControllerExceptionHandler {
     @ExceptionHandler(ResponseStatusException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleResponseStatusException(ResponseStatusException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(e.getStatus())
                 .body(e.getReason());
     }
 }
