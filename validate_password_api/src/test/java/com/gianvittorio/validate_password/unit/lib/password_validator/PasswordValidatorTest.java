@@ -1,12 +1,15 @@
 package com.gianvittorio.validate_password.unit.lib.password_validator;
 
 import com.gianvittorio.validate_password.config.ValidatePasswordConfiguration;
-import com.gianvittorio.validate_password.unit.lib.password_validator.util.BasePasswordValidatorTest;
+import com.gianvittorio.validate_password.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,25 +27,15 @@ public class PasswordValidatorTest extends BasePasswordValidatorTest {
         assertThat(passwordValidator.isValid(null)).isFalse();
     }
 
-    @Test
     @DisplayName("Run miscellaneous parameterized tests")
-    public void miscellaneousTest() {
-        Map<String, Boolean> parameters = Map.of(
-                "", false,
-                "aa", false,
-                "ab", false,
-                "AAAbbbCc", false,
-                "AbTp9!foo", false,
-                "AbTp9!foA", false,
-                "AbTp9 fok", false,
-                "AbTp9!fok", true);
+    @ParameterizedTest(name = "{index} => password={0}, expectation={1}")
+    @MethodSource("argumentsProvider")
+    public void miscellaneousTest(String password, boolean expectation) {
+        assertThat(passwordValidator.isValid(password.toCharArray()))
+                .isEqualTo(expectation);
+    }
 
-        parameters.keySet()
-                .stream()
-                .forEach(password -> {
-                    boolean expectation = parameters.get(password);
-
-                    assertThat(passwordValidator.isValid(password.toCharArray())).isEqualTo(expectation);
-                });
+    private static Stream<Arguments> argumentsProvider() {
+        return TestUtils.argumentsProvider();
     }
 }

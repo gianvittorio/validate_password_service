@@ -11,11 +11,10 @@ public class ValidatePasswordConfiguration {
 
     @Bean
     public PasswordValidator passwordValidator() {
-        return SizeValidator.builder()
-                .minimumSize(MINIMUM_PASSWORD_LENGTH)
-                .build()
-                .addValidator(new LowerCaseValidator())
-                .addValidator(new UpperCaseValidator())
+        return new AnyForbiddenCharacterValidator()
+                .addValidator(SizeValidator.builder().minimumSize(MINIMUM_PASSWORD_LENGTH).build())
+                .addValidator(new LowerCaseCharacterValidator())
+                .addValidator(new UpperCaseCharacterValidator())
                 .addValidator(new SpecialCharacterValidator())
                 .addValidator(new RepeatedCharacterValidator());
     }

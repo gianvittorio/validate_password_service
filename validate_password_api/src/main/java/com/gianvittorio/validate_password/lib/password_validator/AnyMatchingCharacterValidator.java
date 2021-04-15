@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Builder
-public class SingleCharacterMatchingValidator extends PasswordValidatorChain {
+public class AnyMatchingCharacterValidator extends PasswordValidatorChain {
 
     private final Predicate<? super Character> characterMatcher;
 
@@ -18,10 +18,10 @@ public class SingleCharacterMatchingValidator extends PasswordValidatorChain {
                 .mapToObj(pointer -> password[pointer])
                 .anyMatch(characterMatcher::test);
 
-        if (!result) {
-            return false;
+        if (result) {
+            return super.isValidImpl(password);
         }
 
-        return super.isValidImpl(password);
+        return false;
     }
 }

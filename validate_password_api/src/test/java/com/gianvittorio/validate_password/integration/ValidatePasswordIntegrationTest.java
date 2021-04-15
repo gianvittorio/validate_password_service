@@ -3,10 +3,14 @@ package com.gianvittorio.validate_password.integration;
 import com.gianvittorio.validate_password.constants.ValidadePasswordConstants;
 import com.gianvittorio.validate_password.lib.codec.Base64Codec;
 import com.gianvittorio.validate_password.service.ValidatePasswordService;
+import com.gianvittorio.validate_password.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +18,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.util.stream.Stream;
 
 import static com.gianvittorio.validate_password.constants.ValidadePasswordConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -99,5 +105,24 @@ public class ValidatePasswordIntegrationTest {
                 .expectStatus().isBadRequest()
                 .expectBody(String.class)
                 .consumeWith(consumer -> assertThat(consumer.getResponseBody()).isEqualTo(DEFAULT_ERROR_MESSAGE));
+    }
+
+    @DisplayName("Run miscellaneous parameterized tests")
+    @ParameterizedTest(name = "{index} => password={0}, expectation={1}")
+    @MethodSource("argumentsProvider")
+    public void miscellaneousTest(String password, boolean expectation) {
+        String encodedCredentials = base64Codec.encode(DEFAULT_USER.concat(":").concat(password));
+
+        webTestClient.get()
+                .uri(uri.concat("/validate"))
+                .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX.concat(encodedCredentials))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Boolean.class)
+                .consumeWith(consumer -> assertThat(consumer.getResponseBody()).isEqualTo(expectation));
+    }
+
+    private static Stream<Arguments> argumentsProvider() {
+        return TestUtils.argumentsProvider();
     }
 }

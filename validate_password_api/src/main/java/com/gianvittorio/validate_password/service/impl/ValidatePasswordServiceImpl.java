@@ -15,7 +15,6 @@ public class ValidatePasswordServiceImpl implements ValidatePasswordService {
     @Override
     public Mono<Boolean> isValid(String password) {
         return Mono.just(password.toCharArray())
-                .map(passwordValidator::isValid)
-                .log();
+                .map(passwordValidator::isValid);
     }
 }

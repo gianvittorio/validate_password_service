@@ -1,18 +1,17 @@
 package com.gianvittorio.validate_password.unit.lib.password_validator;
 
-import com.gianvittorio.validate_password.lib.password_validator.UpperCaseValidator;
-import com.gianvittorio.validate_password.unit.lib.password_validator.util.BasePasswordValidatorTest;
+import com.gianvittorio.validate_password.lib.password_validator.UpperCaseCharacterValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UpperCaseValidatorTest extends BasePasswordValidatorTest {
+class UpperCaseCharacterValidatorTest extends BasePasswordValidatorTest {
 
     @BeforeEach
     public void setUp() {
-        passwordValidator = new UpperCaseValidator();
+        passwordValidator = new UpperCaseCharacterValidator();
     }
 
     @Test

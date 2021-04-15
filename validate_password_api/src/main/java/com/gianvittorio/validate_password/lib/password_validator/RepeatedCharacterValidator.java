@@ -18,6 +18,8 @@ public class RepeatedCharacterValidator extends PasswordValidatorChain {
         final Set<Character> visited = new HashSet<>();
 
         for (char character : password) {
+            character = Character.toLowerCase(character);
+
             if (visited.contains(character)) {
                 return true;
             }

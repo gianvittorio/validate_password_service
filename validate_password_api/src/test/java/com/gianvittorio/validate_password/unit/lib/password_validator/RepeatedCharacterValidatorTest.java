@@ -1,7 +1,6 @@
 package com.gianvittorio.validate_password.unit.lib.password_validator;
 
 import com.gianvittorio.validate_password.lib.password_validator.RepeatedCharacterValidator;
-import com.gianvittorio.validate_password.unit.lib.password_validator.util.BasePasswordValidatorTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ class RepeatedCharacterValidatorTest extends BasePasswordValidatorTest {
 
     @Test
     @DisplayName("Must return true whenever there are no repeated character")
-    public void atLeastOneSpecialCharacterTest() {
+    public void repeatedCharacterTest() {
         final String password = "abc";
 
         assertThat(passwordValidator.isValid(password.toCharArray())).isTrue();
@@ -25,8 +24,16 @@ class RepeatedCharacterValidatorTest extends BasePasswordValidatorTest {
 
     @Test
     @DisplayName("Must return false whenever at least one character is repeated")
-    public void specialCharacterIsAbsentTest() {
+    public void noRepeatedTest() {
         final String password = "aba";
+
+        assertThat(passwordValidator.isValid(password.toCharArray())).isFalse();
+    }
+
+    @Test
+    @DisplayName("Must return false whenever at least one character is repeated as either upper or lower case")
+    public void upperLowerRepeatedTest() {
+        final String password = "aA";
 
         assertThat(passwordValidator.isValid(password.toCharArray())).isFalse();
     }
