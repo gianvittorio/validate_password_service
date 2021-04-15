@@ -29,7 +29,7 @@ public class ValidatePasswordServiceTest {
         Mockito.when(passwordValidator.isValid(any()))
                 .thenReturn(false);
 
-        validatePasswordService.isValid("password")
+        validatePasswordService.validate("password")
                 .block();
 
         Mockito.verify(passwordValidator)

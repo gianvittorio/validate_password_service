@@ -1,7 +1,7 @@
 package com.gianvittorio.validate_password.integration;
 
 import com.gianvittorio.validate_password.constants.ValidadePasswordConstants;
-import com.gianvittorio.validate_password.lib.codec.Base64Codec;
+import com.gianvittorio.validate_password.dto.RequestDTO;
 import com.gianvittorio.validate_password.service.ValidatePasswordService;
 import com.gianvittorio.validate_password.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 import java.util.stream.Stream;
 
 import static com.gianvittorio.validate_password.constants.ValidadePasswordConstants.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.gianvittorio.validate_password.utils.TestUtils.INVALID_DEFAULT_PASSWORD;
+import static com.gianvittorio.validate_password.utils.TestUtils.VALID_DEFAULT_PASSWORD;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
@@ -35,8 +38,6 @@ public class ValidatePasswordIntegrationTest {
 
     @Autowired
     private ValidatePasswordService validatePasswordService;
-
-    private Base64Codec base64Codec = new Base64Codec();
 
     @LocalServerPort
     private int port;
@@ -53,73 +54,98 @@ public class ValidatePasswordIntegrationTest {
     @Test
     @DisplayName("Must return true whenever provided password is valid")
     public void validPasswordTest() {
-        String encodedCredentials = base64Codec.encode(DEFAULT_USER.concat(":").concat(VALID_DEFAULT_PASSWORD));
+        RequestDTO requestDTO = RequestDTO.builder()
+                .password(VALID_DEFAULT_PASSWORD)
+                .build();
 
-        webTestClient.get()
+        webTestClient.post()
                 .uri(uri.concat("/validate"))
-                .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX.concat(encodedCredentials))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(requestDTO), RequestDTO.class)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(Boolean.class)
-                .consumeWith(consumer -> {
-                    assertThat(consumer.getResponseBody()).isTrue();
-                });
+                .expectBody()
+                .jsonPath("$.password").isEqualTo(VALID_DEFAULT_PASSWORD)
+                .jsonPath("$.isValid").isEqualTo(true);
     }
 
     @Test
     @DisplayName("Must return false whenever provided password is valid")
     public void invalidPasswordTest() {
-        String encodedCredentials = base64Codec.encode(DEFAULT_USER.concat(":").concat(INVALID_DEFAULT_PASSWORD));
+        RequestDTO requestDTO = RequestDTO.builder()
+                .password(INVALID_DEFAULT_PASSWORD)
+                .build();
 
-        webTestClient.get()
+        webTestClient.post()
                 .uri(uri.concat("/validate"))
-                .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX.concat(encodedCredentials))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(requestDTO), RequestDTO.class)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(Boolean.class)
-                .consumeWith(consumer -> {
-                    assertThat(consumer.getResponseBody()).isFalse();
-                });
+                .expectBody()
+                .jsonPath("$.password").isEqualTo(INVALID_DEFAULT_PASSWORD)
+                .jsonPath("$.isValid").isEqualTo(false);
     }
 
     @Test
-    @DisplayName("Must return 400 whenever Authorization header is absent")
-    public void mustThrowIfAuthorizationIsAbsentTest() {
-        webTestClient.get()
-                .uri(uri.concat("/validate"))
+    @DisplayName("Must return 400 and specific null password error message within the body")
+    public void throwWhenPasswordIsNullTest() {
+
+        RequestDTO requestDTO = RequestDTO.builder()
+                .password(null)
+                .build();
+
+        webTestClient.post()
+                .uri(VALIDATE_PASSWORD_ENDPOINT_V1.concat("/validate"))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(requestDTO), RequestDTO.class)
                 .exchange()
                 .expectStatus().isBadRequest()
-                .expectBody(String.class)
-                .consumeWith(consumer -> assertThat(consumer.getResponseBody()).isEqualTo(DEFAULT_ERROR_MESSAGE));
+                .expectBody()
+                .jsonPath("$.password").isEmpty()
+                .jsonPath(".errorMessage").isEqualTo(NULL_PASSWORD_DEFAULT_ERROR_MESSAGE);
     }
 
     @Test
-    @DisplayName("Must return 400 whenever Authorization header is malformed")
-    public void mustThrowIfAuthorizationIsMalformedTest() {
-        String encodedCredentials = base64Codec.encode(DEFAULT_USER.concat(":").concat(INVALID_DEFAULT_PASSWORD));
+    @DisplayName("Must return 400 and specific malformed password error message within the body")
+    public void throwWhenPasswordIsMalformedTest() {
+        RequestDTO requestDTO = RequestDTO.builder()
+                .password("")
+                .build();
 
-        webTestClient.get()
-                .uri(uri.concat("/validate"))
-                .header(AUTHORIZATION_HEADER, encodedCredentials)
+        webTestClient.post()
+                .uri(VALIDATE_PASSWORD_ENDPOINT_V1.concat("/validate"))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(requestDTO), RequestDTO.class)
                 .exchange()
                 .expectStatus().isBadRequest()
-                .expectBody(String.class)
-                .consumeWith(consumer -> assertThat(consumer.getResponseBody()).isEqualTo(DEFAULT_ERROR_MESSAGE));
+                .expectBody()
+                .jsonPath("$.password").isEqualTo("")
+                .jsonPath(".errorMessage").isEqualTo(MALFORMED_PASSWORD_DEFAULT_ERROR_MESSAGE);
     }
 
     @DisplayName("Run miscellaneous parameterized tests")
     @ParameterizedTest(name = "{index} => password={0}, expectation={1}")
     @MethodSource("argumentsProvider")
     public void miscellaneousTest(String password, boolean expectation) {
-        String encodedCredentials = base64Codec.encode(DEFAULT_USER.concat(":").concat(password));
+        RequestDTO requestDTO = RequestDTO.builder()
+                .password(password)
+                .build();
 
-        webTestClient.get()
+        webTestClient.post()
                 .uri(uri.concat("/validate"))
-                .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX.concat(encodedCredentials))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(requestDTO), RequestDTO.class)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(Boolean.class)
-                .consumeWith(consumer -> assertThat(consumer.getResponseBody()).isEqualTo(expectation));
+                .expectBody()
+                .jsonPath("$.password").isEqualTo(password)
+                .jsonPath("$.isValid").isEqualTo(expectation);
     }
 
     private static Stream<Arguments> argumentsProvider() {
