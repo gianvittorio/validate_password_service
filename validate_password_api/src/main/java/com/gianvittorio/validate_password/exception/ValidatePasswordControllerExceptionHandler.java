@@ -5,15 +5,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class ValidatePasswordControllerExceptionHandler {
 
-    @ExceptionHandler(ResponseStatusException.class)
+    @ExceptionHandler(NullPasswordException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleResponseStatusException(ResponseStatusException e) {
-        return ResponseEntity.status(e.getStatus())
-                .body(e.getReason());
+    public ResponseEntity<ApiError> handleNullPasswordException(NullPasswordException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiError.builder().errorMessage(e.getLocalizedMessage()).build());
+    }
+
+    @ExceptionHandler(MalFormedPasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiError> handleMalformedPasswordException(MalFormedPasswordException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiError.builder().password(e.getPassword()).errorMessage(e.getLocalizedMessage()).build());
     }
 }
