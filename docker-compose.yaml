@@ -1,0 +1,22 @@
+version: '3.0'
+
+services:
+  validate_password_service:
+    container_name: 'validate_password_service'
+    build: "./validate_password_api"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+      - "SERVER_PORT=80"
+    ports:
+      - "8080:80"
+    networks:
+      - "validate_password_service_network"
+    volumes:
+      - "validate_password_service_volume:/tmp/validate_password/logs"
+
+volumes:
+  validate_password_service_volume:
+
+networks:
+  validate_password_service_network:
+    driver: 'bridge'
