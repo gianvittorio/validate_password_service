@@ -95,13 +95,13 @@ As the programming language, we go with Java 11. We are picking the Spring WebFl
 ## Running The Project
 First of all, we compile build the project using <strong>Apache Maven</strong> build tool:
 ```console
-cd validate_password_api/target && \
+cd validate_password_api && \
 mvn clean package && \
 cd -
 ```
+The above command will also run each and every test in the project, at any granularity. As soon as the tests are ran and successful, maven launches the web application with <strong>Netty</strong> running as an embedded server.
 
-
-In order to run the project, one must have both <strong>Docker</strong> and <strong>Docker-Compose</strong> installed. Then run:
+Then, assuming we have have both <strong>Docker</strong> and <strong>Docker-Compose</strong> installed, we run:
 ```console
 $ docker-compose up -d --build
 ```
