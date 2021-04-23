@@ -93,6 +93,14 @@ We might ask ourselves why we do not simply use regular expression processing in
 As the programming language, we go with Java 11. We are picking the Spring WebFlux framework, an event-drive, reactive architecture. As opposed to Spring Web MVC, which makes use of the blocking servlet architecture (one thread per request), it will only require a number of threads equal to 2 the number of available cores, which will also lead to less memory being used by the JVM. For slow services it always runs faster than its blocking counterpart. The downside is: the client must also be non-blocking, making use of asynchronous calls/drivers.
 
 ## Running The Project
+First of all, we compile build the project using <strong>Apache Maven</strong> build tool:
+```console
+cd validate_password_api/target && \
+mvn clean package && \
+cd -
+```
+
+
 In order to run the project, one must have both <strong>Docker</strong> and <strong>Docker-Compose</strong> installed. Then run:
 ```console
 $ docker-compose up -d --build
